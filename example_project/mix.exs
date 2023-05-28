@@ -49,7 +49,8 @@ defmodule Example.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:live_svelte, path: ".."}
+      {:live_svelte,
+       github: "C-Sinclair/live_svelte", branch: "macro-generate-functions-optimise"}
     ]
   end
 
