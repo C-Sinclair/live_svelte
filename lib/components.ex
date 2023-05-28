@@ -1,23 +1,16 @@
 defmodule LiveSvelte.Components.Builder do
+  require Logger
+
   defmacro __before_compile__(env) do
-    IO.puts("Calling precompile builder")
+    components = get_svelte_components()
 
-    IO.inspect(Application.get_application(__MODULE__), label: "application")
+    Enum.each(components, fn component ->
+      Logger.info("Surfacing Svelte component: #{component}")
+    end)
 
-    components =
-      get_svelte_components()
-      |> IO.inspect(label: "components")
-
-    components = ["Chat"]
-
-    Module.put_attribute(LiveSvelte.Components, :components, components)
-
-    contents = Enum.map(components, &name_to_function/1)
-
-    # dynamically create a module containing functions for each Svelte component
-    Module.create(LiveSvelte.Components.Generated, contents, env)
-
-    :ok
+    quote do
+      unquote(Enum.map(components, &name_to_function/1))
+    end
   end
 
   def get_svelte_components do
@@ -34,7 +27,6 @@ defmodule LiveSvelte.Components.Builder do
   end
 
   def escape_deps_directory(dir) do
-    IO.inspect(dir, label: "dir")
     parent = Path.expand("../", dir)
 
     cond do
@@ -83,7 +75,6 @@ defmodule LiveSvelte.Components do
   @moduledoc """
   Macros to improve the developer experience of crossing the Liveview/Svelte boundary.
   """
-  @components nil
   @before_compile LiveSvelte.Components.Builder
 
   @doc """
@@ -93,9 +84,7 @@ defmodule LiveSvelte.Components do
     IO.puts("calling using!")
 
     quote do
-      import LiveSvelte.Components.Generated
+      import __MODULE__
     end
   end
-
-  def get_components, do: @components
 end
