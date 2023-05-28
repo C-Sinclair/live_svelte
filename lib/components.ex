@@ -77,12 +77,12 @@ defmodule LiveSvelte.Components do
   """
   @before_compile LiveSvelte.Components.Builder
 
+  use Phoenix.Component
+
   @doc """
   Generates functions local to your current module that can be used to render Svelte components.
   """
   defmacro __using__(_opts) do
-    IO.puts("calling using!")
-
     quote do
       import __MODULE__
     end
